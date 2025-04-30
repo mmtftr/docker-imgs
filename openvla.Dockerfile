@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime
+FROM pytorch/pytorch:2.2.0-cuda12.1-cudnn8-devel
 
 # Set up SSH server
 RUN apt-get update && apt-get install -y \
@@ -25,6 +25,11 @@ RUN mkdir -p /run/sshd
 RUN ssh-keygen -A
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Set CUDA_HOME environment variable
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=${CUDA_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 
 # Python dependencies
 RUN pip install --upgrade pip
@@ -53,7 +58,7 @@ RUN pip install \
     tensorflow_graphics==2021.12.3
 
 # Install Flash Attention (important for OpenVLA)
-RUN pip install packaging
+RUN pip install packaging ninja
 RUN pip install "flash-attn==2.5.5" --no-build-isolation
 
 # LIBERO specific dependencies
@@ -64,6 +69,9 @@ RUN pip install \
     easydict \
     cloudpickle \
     gym
+
+# Install dlimp for OpenVLA
+RUN pip install --no-deps git+https://github.com/moojink/dlimp_openvla
 
 # Create a working directory for the codebase
 WORKDIR /openvla
