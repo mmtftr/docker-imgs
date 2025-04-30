@@ -68,6 +68,10 @@ RUN pip install \
 # Create a working directory for the codebase
 WORKDIR /openvla
 
+RUN git clone https://github.com/openvla/openvla.git && \
+    cd openvla && \
+    pip install -e .
+
 # Expose the SSH port
 EXPOSE ${PORT}
 
