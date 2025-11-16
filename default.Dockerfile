@@ -48,7 +48,9 @@ RUN pip install --no-cache-dir -q \
   scikit-learn \
   ipython \
   sentencepiece \
-  sentence-transformers
+  sentence-transformers \
+  tensorflow==2.18.0 \
+  tf-keras==2.18.0
 
 EXPOSE ${PORT}
 
